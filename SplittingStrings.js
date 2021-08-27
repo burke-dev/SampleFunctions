@@ -4,9 +4,9 @@ function splitValueByDelimiter(value) {
     return null;
   }
 
-  const delimitersUsed = [",", ";", "/", "-"].filter(x => {
-    if(value.includes(x)) {
-      return x;
+  const delimitersUsed = [",", ";", "/", "-"].filter(delimiter => {
+    if(value.includes(delimiter)) {
+      return delimiter;
     }
   });
  
