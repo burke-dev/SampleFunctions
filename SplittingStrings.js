@@ -1,6 +1,6 @@
 function splitValueByDelimiter(value) {
   if(typeof value !== 'string') {
-    console.error(`_splitValuesByDelimiter value type must be string\r\nvalue's typeof ${typeof value}\r\n${value.toString()}`);
+    console.error(`splitValueByDelimiter() value type must be string\r\nvalue's typeof ${typeof value}\r\n${value.toString()}`);
     return null;
   }
 
