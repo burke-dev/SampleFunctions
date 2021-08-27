@@ -17,7 +17,7 @@ function splitValueByDelimiter(value) {
     This also filters out empty results for consistency and corrects for human error.
   */
   if(delimitersUsed.length) {
-    delimitersUsed.map(x => value = value.replace(new RegExp(x, 'gi'), ","));
+    delimitersUsed.map(delimiter => value = value.replace(new RegExp(delimiter, 'gi'), ","));
     return value.split(",").filter(x => x);
   }
   // If no delimiters are used, this simply returns as an array with one entry
