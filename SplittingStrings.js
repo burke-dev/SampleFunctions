@@ -1,6 +1,6 @@
-function splitValuesByDelimiter(value) {
+function splitValueByDelimiter(value) {
   if(typeof value !== 'string') {
-    throw new Error(`splitValuesByDelimiter() value type must be string\r\ntypeof value === ${typeof value}`);
+    throw new Error(`splitValueByDelimiter() value type must be string\r\ntypeof value === ${typeof value}`);
   }
   /*
     If a delimiter in the array is entered then this will replace them with a comma then split on each comma returning an array of strings to be used in other functions.
