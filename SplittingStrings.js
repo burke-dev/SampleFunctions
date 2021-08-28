@@ -8,6 +8,5 @@ function splitValueByDelimiter(value) {
     will have them listed with commas or slashes between them, getting this into a consistent state allows this data to be used easily and consistently.
     This also filters out empty results for consistency and corrects for human error.
   */
-  [";", "/", "-"].map(delimiter => value = value.replace(new RegExp(delimiter, 'gi'), ","));
-  return value.split(",").filter(x => x);
+  return value.replace(/[;/-]/g, ',').split(',').filter(x => x);
 }
