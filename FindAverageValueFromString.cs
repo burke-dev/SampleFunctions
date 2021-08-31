@@ -15,7 +15,7 @@ public class Program
 	private static float SetNetAverageFromString(string rawValue)
 	{
 		var newValues = SetNewValues(rawValue);
-		RemoveLowestValues(newValues, 0);
+		RemoveLowestValues(newValues, 2);
 		return AverageValue(newValues);
 	}
 	
