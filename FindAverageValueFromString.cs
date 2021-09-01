@@ -1,55 +1,46 @@
 using System;
 using System.Globalization;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Linq;
 
 public class Program
 {
 	public static void Main()
 	{
-		var netAverage = SetNetAverageFromString("8;6/7-5,30,9");
+		var netAverage = SetNetAverageFromString("8,x,6,y,7,5,z,30,9");
 		Console.WriteLine("Output Average => " + netAverage);
 	}
-	
+
 	private static float SetNetAverageFromString(string rawValue)
 	{
-		var newValues = SetNewValues(rawValue);
-		RemoveLowestValues(newValues, 2);
+		var newValues = SetNewValues(rawValue, 2);
 		return AverageValue(newValues);
 	}
-	
-	private static List<float> SetNewValues(string rawValue)
+
+	private static List<float> SetNewValues(string rawValue, int removeLowest)
 	{
-		var newValues = new List<float>();
-		foreach(var val in Regex.Split(rawValue, "[-;/,]+"))
-		{
-			try
-			{
-				newValues.Add(float.Parse(val, CultureInfo.InvariantCulture.NumberFormat));
-			}
-			catch(Exception ex)
-			{
-				Console.WriteLine("Invalid value entered => \"" + val + "\"\r\n" + ex);
-			}
-		}
-		return newValues;
+		string delimitersUsed = "-;/,";
+		return rawValue
+			.Split(delimitersUsed.ToCharArray())
+			.Where(val => ValidEntry(val))
+			.Select(val => float.Parse(val, CultureInfo.InvariantCulture.NumberFormat))
+			.OrderBy(val => val)
+			.Where((val, index) => index >= removeLowest)
+			.ToList();
 	}
 	
+	private static bool ValidEntry(string val)
+	{
+		if(float.TryParse(val, out _))
+		{
+			return true;
+		}
+		Console.WriteLine("Invalid entry '" + val + "'. Not added to the List of values");
+		return false;		
+	}
+
 	private static float AverageValue(List<float> newValues)
 	{
-		return newValues.Count > 0 ? newValues.Sum() / newValues.Count : 0;
-	}
-	
-	private static void RemoveLowestValues(List<float> newValues, int removeLowest)
-	{
-		newValues.Sort();
-		for(var i = 0; i < removeLowest; i++)
-		{
-			if(newValues.Count > 0)
-			{
-				newValues.RemoveAt(0);
-			}
-		}
+		return newValues.Count() > 0 ? newValues.Sum() / newValues.Count() : 0;
 	}
 }
