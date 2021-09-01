@@ -7,40 +7,68 @@ public class Program
 {
 	public static void Main()
 	{
-		var netAverage = SetNetAverageFromString("8,x,6,y,7,5,z,30,9");
-		Console.WriteLine("Output Average => " + netAverage);
+		var averageValue = new AverageValue("8;6/7-5,30,9");
+		averageValue.RemoveLowest(2);
+		averageValue.ConsoleNewValues();
+		averageValue.ConsoleAverage();
+		var averageValue2 = new AverageValue("8;6/7-5,30,9", 2);
 	}
+}
 
-	private static float SetNetAverageFromString(string rawValue)
+public class AverageValue
+{
+	public IEnumerable<float> NewValues { get; private set; }
+	
+	public AverageValue(string rawValue)
 	{
-		var newValues = SetNewValues(rawValue, 2);
-		return AverageValue(newValues);
+		this.NewValues = SetNewValues(rawValue);
+	}
+	
+	public AverageValue(string rawValue, int entriesToRemove)
+	{
+		this.NewValues = SetNewValues(rawValue);
+		RemoveLowest(2);
+		ConsoleNewValues();
+		ConsoleAverage();		
+	}
+	
+	public void RemoveLowest(int entriesToRemove)
+	{
+		this.NewValues = this.NewValues.Where((_, index) => index >= entriesToRemove);
+	}
+	
+	public void ConsoleAverage()
+	{
+		Console.WriteLine($"Output Average => {SetAverageValue(this.NewValues)}");
 	}
 
-	private static List<float> SetNewValues(string rawValue, int removeLowest)
+	public void ConsoleNewValues()
+	{
+		Console.WriteLine($"[{String.Join(", ", NewValues.ToArray())}]");
+	}
+
+	private static IEnumerable<float> SetNewValues(string rawValue)
 	{
 		string delimitersUsed = "-;/,";
 		return rawValue
 			.Split(delimitersUsed.ToCharArray())
-			.Where(val => ValidEntry(val))
+			.Where(val => IsValidEntry(val))
 			.Select(val => float.Parse(val, CultureInfo.InvariantCulture.NumberFormat))
-			.OrderBy(val => val)
-			.Where((val, index) => index >= removeLowest)
-			.ToList();
+			.OrderBy(val => val);
 	}
 	
-	private static bool ValidEntry(string val)
+	private static bool IsValidEntry(string val)
 	{
 		if(float.TryParse(val, out _))
 		{
 			return true;
 		}
-		Console.WriteLine("Invalid entry '" + val + "'. Not added to the List of values");
+		Console.WriteLine($"Invalid entry '{val}'. Not added to the List of values");
 		return false;		
 	}
 
-	private static float AverageValue(List<float> newValues)
+	private static float SetAverageValue(IEnumerable<float> newValues)
 	{
 		return newValues.Count() > 0 ? newValues.Sum() / newValues.Count() : 0;
-	}
+	}	
 }
