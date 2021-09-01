@@ -11,7 +11,7 @@ public class Program
 		averageValue.RemoveLowest(2);
 		averageValue.ConsoleNewValues();
 		averageValue.ConsoleAverage();
-		var averageValue2 = new AverageValue("8;6/7-5,30,9", 2);
+		var averageValue2 = new AverageValue("8;6/7-5,30,9", 3);
 	}
 }
 
@@ -27,7 +27,7 @@ public class AverageValue
 	public AverageValue(string rawValue, int entriesToRemove)
 	{
 		this.NewValues = SetNewValues(rawValue);
-		RemoveLowest(2);
+		RemoveLowest(entriesToRemove);
 		ConsoleNewValues();
 		ConsoleAverage();		
 	}
