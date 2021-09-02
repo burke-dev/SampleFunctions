@@ -32,6 +32,11 @@ public class AverageValue
 		ConsoleAverage();		
 	}
 	
+	public void AddNewValues(string rawValue)
+	{
+		this.NewValues = this.NewValues.Concat(SetNewValues(rawValue)).OrderBy(val => val);
+	}
+	
 	public void RemoveLowest(int entriesToRemove)
 	{
 		this.NewValues = this.NewValues.Where((_, index) => index >= entriesToRemove);
@@ -39,7 +44,8 @@ public class AverageValue
 	
 	public void ConsoleAverage()
 	{
-		Console.WriteLine($"Output Average => {SetAverageValue(this.NewValues)}");
+		var average = this.NewValues.Count() > 0 ? this.NewValues.Sum() / this.NewValues.Count() : 0;
+		Console.WriteLine($"Output Average => {average}");
 	}
 
 	public void ConsoleNewValues()
@@ -57,10 +63,6 @@ public class AverageValue
 			.OrderBy(val => val);
 	}
 	
-	public void AddNewValues(string rawValue) {
-		this.NewValues = this.NewValues.Concat(SetNewValues(rawValue)).OrderBy(val => val);
-	}
-	
 	private static bool IsValidEntry(string val)
 	{
 		if(float.TryParse(val, out _))
@@ -70,9 +72,4 @@ public class AverageValue
 		Console.WriteLine($"Invalid entry '{val}'. Not added to the List of values");
 		return false;		
 	}
-
-	private static float SetAverageValue(IEnumerable<float> newValues)
-	{
-		return newValues.Count() > 0 ? newValues.Sum() / newValues.Count() : 0;
-	}	
 }
