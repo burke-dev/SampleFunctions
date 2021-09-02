@@ -7,11 +7,11 @@ public class Program
 {
 	public static void Main()
 	{
-		var averageValue = new AverageValue("8;6/7-5,30,9");
-		averageValue.RemoveLowest(2);
-		averageValue.ConsoleNewValues();
-		averageValue.ConsoleAverage();
-		var averageValue2 = new AverageValue("8;6/7-5,30,9", 3);
+		var averageValue = new AverageValue("8;6,7-5,30,9", 2);
+		var averageValue2 = new AverageValue("8,6/7-5,30,9");
+		averageValue2.AddNewValues("6,32,2,44,8,4,1,1,111");
+		averageValue2.ConsoleNewValues();
+		averageValue2.ConsoleAverage();
 	}
 }
 
@@ -55,6 +55,10 @@ public class AverageValue
 			.Where(val => IsValidEntry(val))
 			.Select(val => float.Parse(val, CultureInfo.InvariantCulture.NumberFormat))
 			.OrderBy(val => val);
+	}
+	
+	public void AddNewValues(string rawValue) {
+		this.NewValues = this.NewValues.Concat(SetNewValues(rawValue)).OrderBy(val => val);
 	}
 	
 	private static bool IsValidEntry(string val)
