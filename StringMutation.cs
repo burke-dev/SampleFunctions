@@ -75,5 +75,5 @@ public static class MutateString
 	private static List<string> AllSets = new List<string>{"", "caps", "sarcasm"};
 	private static char _SarcasmElement(char element, bool isEven) => (isEven ? char.Parse(element.ToString().ToUpper()) : element);
 	private static void _ShowSet(string val, bool isClean) => AllSets.ForEach(type => _ShowEach(val, type, isClean));
-	private static string _CleanString(string val) => Regex.Replace(val, @"[.,!#]", "", RegexOptions.IgnorePatternWhitespace);
+	private static string _CleanString(string val) => new Regex("[^a-zA-Z0-9 ]").Replace(val, "");
 }
