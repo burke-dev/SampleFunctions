@@ -6,42 +6,36 @@ public class Program
 {
 	public static void Main()
 	{
-		var myValue = FancyString.CleanString("Hel,l!o. World.");
-		Console.WriteLine(myValue);
-		Console.WriteLine(FancyString.Yelling(myValue));
-		Console.WriteLine(FancyString.Sarcasm(myValue));
-		Console.WriteLine(FancyString.ReverseLetters(myValue));
-		Console.WriteLine(FancyString.ReverseWords(myValue));
-		Console.WriteLine(FancyString.Sarcasm(FancyString.ReverseLetters(myValue)));
+		MutateString.ShowAllSets("Hel,l!o. World. -Mr. PLinke#tt");
 	}
 }
 
-public static class FancyString
+public static class MutateString
 {
-	public static string CleanString(string val)
+	public static void ShowAllSets(string val)
 	{
-		return Regex.Replace(val, @"[.,!]", "", RegexOptions.IgnorePatternWhitespace);
+		Console.WriteLine($"{val} <~ raw entry");
+		_ShowSet(val, true);
+		_ShowSet(val, false);
 	}
 
-	public static string Yelling(string val)
+	public static string ReverseLetters(string val, string yellSarcasm, bool isClean) => MutateRawString(_ReverseLetters(val), yellSarcasm, isClean);
+	public static string ReverseWords(string val, string yellSarcasm, bool isClean) => MutateRawString(_ReverseWords(val), yellSarcasm, isClean);
+	
+	public static string MutateRawString(string val, string yellSarcasm, bool isClean)
 	{
-		return $"{val.ToUpper()}!";
-	}
-
-	public static string Sarcasm(string val)
-	{
-		var msPacman = String.Empty;
-		for(var i=0; i < val.Length; i++)
+		val = isClean ? _CleanString(val) : val;
+		switch (yellSarcasm.ToLower())
 		{
-			var v = val[i].ToString();
-			msPacman += i % 2 == 0 ? v.ToUpper() : v.ToLower();
+			case "caps": return $"{val.ToUpper()}!";
+			case "sarcasm": return _Sarcasm(val);
+			default: return val;
 		}
-		return msPacman + (val.Length % 2 == 0 ? "!1!" : "1!1");
 	}
 
-	public static string ReverseLetters(string val)
+	private static string _ReverseLetters(string val)
 	{
-		string reverseString = string.Empty;
+		var reverseString = string.Empty;
 		for (var i = val.Length - 1; i >= 0; i--)
 		{
 			reverseString += val[i];
@@ -49,14 +43,37 @@ public static class FancyString
 		return reverseString;
 	}
 
-	public static string ReverseWords(string val)
+	private static string _ReverseWords(string val)
 	{
-		var theValues = val.Split(" ");
+		var splitValues = val.Split(" ");
 		var reverseWords = new List<string>();
-		for (var i = theValues.Length - 1; i >= 0; i--)
+		for (var i = splitValues.Length - 1; i >= 0; i--)
 		{
-			reverseWords.Add(theValues[i]);
+			reverseWords.Add(splitValues[i]);
 		}
 		return string.Join(" ", reverseWords);
 	}
+
+	private static void _ShowEach(string val, string yellSarcasm, bool isClean)
+	{
+		Console.WriteLine($"{(isClean ? "Clean" : "Dirty")} ~ {(yellSarcasm.Length > 0 ? yellSarcasm : "regular")}");
+		Console.WriteLine($"{MutateRawString(val, yellSarcasm, isClean)} <~ order unmodified");
+		Console.WriteLine($"{ReverseLetters(val, yellSarcasm, isClean)} <~ letter order reversed");
+		Console.WriteLine($"{ReverseWords(val, yellSarcasm, isClean)} <~ word order reversed");
+	}
+	
+	private static string _Sarcasm(string val)
+	{
+		var arr = val.ToLower().ToCharArray();
+		Array.ForEach(arr, element =>
+		{
+			var index = Array.IndexOf(arr, element);
+			arr[index] = _SarcasmElement(element, index % 2 == 0);
+		});
+		return string.Join("", arr) + (val.Length % 2 == 0 ? "!1!" : "1!1");
+	}
+	private static List<string> AllSets = new List<string>{"", "caps", "sarcasm"};
+	private static char _SarcasmElement(char element, bool isEven) => (isEven ? char.Parse(element.ToString().ToUpper()) : element);
+	private static void _ShowSet(string val, bool isClean) => AllSets.ForEach(type => _ShowEach(val, type, isClean));
+	private static string _CleanString(string val) => Regex.Replace(val, @"[.,!#]", "", RegexOptions.IgnorePatternWhitespace);
 }
