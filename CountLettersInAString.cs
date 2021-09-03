@@ -7,42 +7,28 @@ public class Program
 {
 	public static void Main()
 	{
-		var ironValue = new CountEntries("HELLO world. I am Iron Man!", true);
-		ironValue.GetAllValues();
-		ironValue.GetValueCounts(true);
-		var myValue = new CountEntries("Hello there. General Kenobi!", false);
-		myValue.GetValueCounts(false);
+		var myValue = new CountEntries("Hello there. General Kenobi!");
+		myValue.GetAllValues(true);
+		myValue.GetValueCounts(true, true);
 	}
 }
 
 public class CountEntries
 {
-	public IEnumerable<string> Values {get; private set;}
+	public string MyValue {get; private set;}
 	
-	public CountEntries(string val, bool cleanSpecial)
-	{
-		if(cleanSpecial)
-		{
-			val = _CleanString(val);
-		}
-		Values = String.Concat(val.Where(c => !Char.IsWhiteSpace(c))).OrderBy(c => c).Select(x => x.ToString());
-	}
+	public CountEntries(string val) => MyValue = val;
+	
+	public void GetValueCounts(bool isCaseSensitive, bool cleanSpecial) => _SetDictionary(isCaseSensitive, cleanSpecial).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
+	public void GetAllValues(bool cleanSpecial) => Console.WriteLine($"{MyValue} ~> {string.Join("", _SplitValue(cleanSpecial))}");
+	
+	private IEnumerable<string> _SplitValue(bool cleanSpecial) => String.Concat((cleanSpecial ? _CleanString(MyValue) : MyValue).Where(v => !Char.IsWhiteSpace(v))).OrderBy(v => v).Select(v => v.ToString());
 	private static string _CleanString(string val) => new Regex("[^a-zA-Z0-9]").Replace(val, "");
-	
-	public void GetValueCounts(bool isCaseSensitive)
-	{
-		foreach(KeyValuePair<string, int> val in setDictionary(isCaseSensitive))
-		{
-			Console.WriteLine($"{val.Key}: {val.Value}");
-		}
-	}
-	
-	public void GetAllValues() => Console.WriteLine(string.Join("", Values));
-	
-	private Dictionary<string, int> setDictionary(bool isCaseSensitive)
+
+	private Dictionary<string, int> _SetDictionary(bool isCaseSensitive, bool cleanSpecial)
 	{
 		var myValues = new Dictionary<string, int>();
-		foreach(var key in Values)
+		foreach(var key in _SplitValue(cleanSpecial))
 		{
 			var tempKey = isCaseSensitive ? key : key.ToUpper();
 			if(myValues.ContainsKey(tempKey))
