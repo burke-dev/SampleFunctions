@@ -7,43 +7,56 @@ class Program
 {
 	public static void Main()
 	{
-		var myValue = new CountCharacters("Hello there. General Kenobi! R2D2 C-3PO");
-		myValue.ConsoleAllValues(true, true);
-		myValue.ConsoleValueCounts(false, true, false);
+		var myValue = new CountCharacters("Kenobi: Hello there. \r\nGreivous: General Kenobi! \r\nR2D2@#$ \r\nC-3PO?\r\n");
+		myValue.ConsoleValue();
+		myValue.ConsoleValueCounts(FilterTypeEnum.AllLettersAndNumbers, true);
 	}
 }
 
 public class CountCharacters
 {
 	public string MyValue {get; private set;}
-	
 	public CountCharacters(string myValue) => MyValue = myValue;
-	public void ConsoleAllValues(bool cleanSpecial, bool hasNumbers) => Console.WriteLine($"{MyValue} ~> {string.Join("", _SplitValue(cleanSpecial, hasNumbers))}");
-	public void ConsoleValueCounts(bool isCaseSensitive, bool cleanSpecial, bool hasNumbers) => SetValues(isCaseSensitive, cleanSpecial, hasNumbers).OrderBy(x => x.Key).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
-
-	private static string _CleanString(string val, bool hasNumbers = false) 
+	
+	public void ConsoleValue() => Console.WriteLine(MyValue);
+	public void ConsoleValueCounts(FilterTypeEnum filterTypeEnum, bool isCaseSensitive) => _SetDictionary(filterTypeEnum, isCaseSensitive).OrderBy(x => x.Key).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
+	private Dictionary<string, int> _SetDictionary(FilterTypeEnum filterTypeEnum, bool isCaseSensitive)
 	{
-		var validCharsList = "a-zA-Z";
-		if(hasNumbers)
-		{
-			validCharsList += "0-9";
-		}
-		return new Regex($"[^{validCharsList}]").Replace(val, "");
-	}
-	private IEnumerable<string> _SplitValue(bool cleanSpecial, bool hasNumbers) => String.Concat((cleanSpecial ? _CleanString(MyValue, hasNumbers) : MyValue).Where(v => !Char.IsWhiteSpace(v))).OrderBy(v => v).Select(v => v.ToString());
-	private Dictionary<string, int> SetValues(bool isCaseSensitive, bool cleanSpecial, bool hasNumbers)
-	{
-		var myValues = new Dictionary<string, int>();
-		foreach (var key in _SplitValue(cleanSpecial, hasNumbers))
+		var dictionaryValues = new Dictionary<string, int>();
+		foreach (var key in _SplitKeys(filterTypeEnum))
 		{
 			var tempKey = isCaseSensitive ? key : key.ToUpper();
-			if (myValues.ContainsKey(tempKey))
+			if (dictionaryValues.ContainsKey(tempKey))
 			{
-				myValues[tempKey]++;
+				dictionaryValues[tempKey]++;
 				continue;
 			}
-			myValues.Add(tempKey, 1);
+			dictionaryValues.Add(tempKey, 1);
 		}
-		return myValues;
+		return dictionaryValues;
 	}
+	
+	private IEnumerable<string> _SplitKeys(FilterTypeEnum filterTypeEnum) => _FilteredValue(filterTypeEnum).Select(val => val.ToString());
+	private string _FilteredValue(FilterTypeEnum filterTypeEnum)
+	{
+		switch(filterTypeEnum)
+		{
+			case FilterTypeEnum.AllLettersAndNumbers: return new Regex($"[^a-zA-Z0-9]").Replace(MyValue, "");
+			case FilterTypeEnum.UppercaseLettersOnly: return new Regex($"[^A-Z]").Replace(MyValue, "");
+			case FilterTypeEnum.LowercaseLettersOnly: return new Regex($"[^a-z]").Replace(MyValue, "");
+			case FilterTypeEnum.AllLetters: return new Regex($"[^a-zA-Z]").Replace(MyValue, "");
+			case FilterTypeEnum.NumbersOnly: return new Regex($"[^0-9]").Replace(MyValue, "");
+			default: return MyValue;
+		}
+	}	
+}
+
+public enum FilterTypeEnum
+{
+	AllLettersAndNumbers,
+	UppercaseLettersOnly,
+	LowercaseLettersOnly,
+	AllLetters,
+	NumbersOnly,
+	NoFilter
 }
