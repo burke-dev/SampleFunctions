@@ -7,17 +7,17 @@ class Program
 {
 	public static void Main()
 	{
-		var myValue = new CountEntries("Hello there. General Kenobi! R2D2 C-3PO");
+		var myValue = new CountCharacters("Hello there. General Kenobi! R2D2 C-3PO");
 		myValue.ConsoleAllValues(true, true);
 		myValue.ConsoleValueCounts(false, true, false);
 	}
 }
 
-public class CountEntries
+public class CountCharacters
 {
 	public string MyValue {get; private set;}
 	
-	public CountEntries(string myValue) => MyValue = myValue;
+	public CountCharacters(string myValue) => MyValue = myValue;
 	public void ConsoleAllValues(bool cleanSpecial, bool hasNumbers) => Console.WriteLine($"{MyValue} ~> {string.Join("", _SplitValue(cleanSpecial, hasNumbers))}");
 	public void ConsoleValueCounts(bool isCaseSensitive, bool cleanSpecial, bool hasNumbers) => SetValues(isCaseSensitive, cleanSpecial, hasNumbers).OrderBy(x => x.Key).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
 
