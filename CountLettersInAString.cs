@@ -9,7 +9,7 @@ class Program
 	{
 		var myValue = new CountCharacters("Kenobi: Hello there. \r\nGreivous: General Kenobi! \r\nR2D2@#$ \r\nC-3PO?\r\n");
 		myValue.ConsoleValue();
-		myValue.ConsoleValueCounts(FilterTypeEnum.AllLettersAndNumbers, true);
+		myValue.ConsoleValueCounts(FilterTypeEnum.NoFilter, true);
 	}
 }
 
@@ -19,11 +19,11 @@ public class CountCharacters
 	public CountCharacters(string myValue) => MyValue = myValue;
 	
 	public void ConsoleValue() => Console.WriteLine(MyValue);
-	public void ConsoleValueCounts(FilterTypeEnum filterTypeEnum, bool isCaseSensitive) => _SetDictionary(filterTypeEnum, isCaseSensitive).OrderBy(x => x.Key).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
-	private Dictionary<string, int> _SetDictionary(FilterTypeEnum filterTypeEnum, bool isCaseSensitive)
+	public void ConsoleValueCounts(FilterTypeEnum filterType, bool isCaseSensitive) => _SetDictionary(filterType, isCaseSensitive).OrderBy(x => x.Key).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
+	private Dictionary<string, int> _SetDictionary(FilterTypeEnum filterType, bool isCaseSensitive)
 	{
 		var dictionaryValues = new Dictionary<string, int>();
-		foreach (var key in _SplitKeys(filterTypeEnum))
+		foreach (var key in _SplitKeys(filterType))
 		{
 			var tempKey = isCaseSensitive ? key : key.ToUpper();
 			if (dictionaryValues.ContainsKey(tempKey))
@@ -35,19 +35,15 @@ public class CountCharacters
 		}
 		return dictionaryValues;
 	}
-	
-	private IEnumerable<string> _SplitKeys(FilterTypeEnum filterTypeEnum) => _FilteredValue(filterTypeEnum).Select(val => val.ToString());
-	private string _FilteredValue(FilterTypeEnum filterTypeEnum)
+	private IEnumerable<string> _SplitKeys(FilterTypeEnum filterType) => _FilteredValue(filterType).Select(val => val.ToString());
+	private string _FilteredValue(FilterTypeEnum filterType)
 	{
-		switch(filterTypeEnum)
+		if(filterType == FilterTypeEnum.NoFilter)
 		{
-			case FilterTypeEnum.AllLettersAndNumbers: return new Regex($"[^a-zA-Z0-9]").Replace(MyValue, "");
-			case FilterTypeEnum.UppercaseLettersOnly: return new Regex($"[^A-Z]").Replace(MyValue, "");
-			case FilterTypeEnum.LowercaseLettersOnly: return new Regex($"[^a-z]").Replace(MyValue, "");
-			case FilterTypeEnum.AllLetters: return new Regex($"[^a-zA-Z]").Replace(MyValue, "");
-			case FilterTypeEnum.NumbersOnly: return new Regex($"[^0-9]").Replace(MyValue, "");
-			default: return MyValue;
+			return MyValue;
 		}
+		var filterArr = new string[5] {"a-zA-Z0-9", "A-Z", "a-z", "a-zA-Z", "0-9"};
+		return new Regex($"[^{filterArr[(int)filterType]}]").Replace(MyValue, "");
 	}	
 }
 
