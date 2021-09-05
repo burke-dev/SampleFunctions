@@ -3,13 +3,13 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-public class Program
+class Program
 {
 	public static void Main()
 	{
-		var myValue = new CountEntries("Hello there. General Kenobi!");
-		myValue.GetAllValues(true);
-		myValue.GetValueCounts(true, true);
+		var myValue = new CountEntries("Hello there. General Kenobi! R2D2 C-3PO");
+		myValue.ConsoleAllValues(true, true);
+		myValue.ConsoleValueCounts(false, true, false);
 	}
 }
 
@@ -17,21 +17,27 @@ public class CountEntries
 {
 	public string MyValue {get; private set;}
 	
-	public CountEntries(string val) => MyValue = val;
-	
-	public void GetValueCounts(bool isCaseSensitive, bool cleanSpecial) => _SetDictionary(isCaseSensitive, cleanSpecial).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
-	public void GetAllValues(bool cleanSpecial) => Console.WriteLine($"{MyValue} ~> {string.Join("", _SplitValue(cleanSpecial))}");
-	
-	private IEnumerable<string> _SplitValue(bool cleanSpecial) => String.Concat((cleanSpecial ? _CleanString(MyValue) : MyValue).Where(v => !Char.IsWhiteSpace(v))).OrderBy(v => v).Select(v => v.ToString());
-	private static string _CleanString(string val) => new Regex("[^a-zA-Z0-9]").Replace(val, "");
+	public CountEntries(string myValue) => MyValue = myValue;
+	public void ConsoleAllValues(bool cleanSpecial, bool hasNumbers) => Console.WriteLine($"{MyValue} ~> {string.Join("", _SplitValue(cleanSpecial, hasNumbers))}");
+	public void ConsoleValueCounts(bool isCaseSensitive, bool cleanSpecial, bool hasNumbers) => SetValues(isCaseSensitive, cleanSpecial, hasNumbers).OrderBy(x => x.Key).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
 
-	private Dictionary<string, int> _SetDictionary(bool isCaseSensitive, bool cleanSpecial)
+	private static string _CleanString(string val, bool hasNumbers = false) 
+	{
+		var validCharsList = "a-zA-Z";
+		if(hasNumbers)
+		{
+			validCharsList += "0-9";
+		}
+		return new Regex($"[^{validCharsList}]").Replace(val, "");
+	}
+	private IEnumerable<string> _SplitValue(bool cleanSpecial, bool hasNumbers) => String.Concat((cleanSpecial ? _CleanString(MyValue, hasNumbers) : MyValue).Where(v => !Char.IsWhiteSpace(v))).OrderBy(v => v).Select(v => v.ToString());
+	private Dictionary<string, int> SetValues(bool isCaseSensitive, bool cleanSpecial, bool hasNumbers)
 	{
 		var myValues = new Dictionary<string, int>();
-		foreach(var key in _SplitValue(cleanSpecial))
+		foreach (var key in _SplitValue(cleanSpecial, hasNumbers))
 		{
 			var tempKey = isCaseSensitive ? key : key.ToUpper();
-			if(myValues.ContainsKey(tempKey))
+			if (myValues.ContainsKey(tempKey))
 			{
 				myValues[tempKey]++;
 				continue;
