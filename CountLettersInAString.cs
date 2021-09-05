@@ -8,8 +8,8 @@ class Program
 	public static void Main()
 	{
 		var myValue = new CountCharacters("Kenobi: Hello there. \r\nGreivous: General Kenobi! \r\nR2D2@#$ \r\nC-3PO?\r\n");
-		myValue.ConsoleValue();
-		myValue.ConsoleValueCounts(FilterTypeEnum.NoFilter, true);
+		Console.WriteLine(myValue.MyValue);
+		myValue.ConsoleValueCounts(FilterTypeEnum.AllLettersAndNumbers, true);
 	}
 }
 
@@ -18,7 +18,6 @@ public class CountCharacters
 	public string MyValue {get; private set;}
 	public CountCharacters(string myValue) => MyValue = myValue;
 	
-	public void ConsoleValue() => Console.WriteLine(MyValue);
 	public void ConsoleValueCounts(FilterTypeEnum filterType, bool isCaseSensitive) => _SetDictionary(filterType, isCaseSensitive).OrderBy(x => x.Key).ToList().ForEach(val => Console.WriteLine($"{val.Key}: {val.Value}"));
 	private Dictionary<string, int> _SetDictionary(FilterTypeEnum filterType, bool isCaseSensitive)
 	{
