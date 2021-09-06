@@ -9,7 +9,7 @@ class Program
 	{
 		var myValue = new CountCharacters("Kenobi: Hello there. \nGreivous: General Kenobi! \nR2D2@#$ \nC-3PO?\n");
 		Console.WriteLine(myValue.MyValue);
-		myValue.ConsoleValueCounts(FilterTypeEnum.UppercaseLettersOnly, true);
+		myValue.ConsoleValueCounts(FilterTypeEnum.LettersOnly, true);
 		var staticString = "\nVader: No, I am your father.\nLuke: That's IMPOSSIBLE!\n";
 		Console.WriteLine(staticString);
 		CountCharacters.ConsoleValueCounts(staticString, FilterTypeEnum.NoFilter, false);
@@ -42,18 +42,22 @@ public class CountCharacters
 		return dictionaryValues;
 	}
 	private static IEnumerable<string> _SplitKeys(string myValue, FilterTypeEnum filterType) => _FilteredValue(myValue, filterType).Select(val => val.ToString());
-	private static string _FilteredValue(string myValue, FilterTypeEnum filterType)
+	private static string _FilteredValue(string myValue, FilterTypeEnum filterType) => filterType != FilterTypeEnum.NoFilter ? new Regex($"[^{_SetFilter(filterType)}]").Replace(myValue, "") : myValue;
+	private static string _SetFilter(FilterTypeEnum filterType)
 	{
-		if(filterType != FilterTypeEnum.NoFilter)
+		var filterArr = new string[3] {"A-Z", "a-z", "0-9"};
+		switch((int)filterType)
 		{
-			var filterArr = new string[5] {"a-zA-Z0-9", "A-Z", "a-z", "a-zA-Z", "0-9"};
-			return new Regex($"[^{filterArr[(int)filterType]}]").Replace(myValue, "");
+			case 1: return filterArr[0];
+			case 2: return filterArr[1];
+			case 3: return string.Join("", filterArr[0] + filterArr[1]);
+			case 4: return filterArr[2];
+			default: return string.Join("", filterArr);
 		}
-		return myValue;
-	}	
+	}
 }
 
 public enum FilterTypeEnum
 {
-	AllLettersAndNumbers, UppercaseLettersOnly, LowercaseLettersOnly, AllLetters, NumbersOnly, NoFilter
+	AllLettersAndNumbers, UppercaseLettersOnly, LowercaseLettersOnly, LettersOnly, NumbersOnly, NoFilter
 }
