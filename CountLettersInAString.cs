@@ -9,7 +9,7 @@ class Program
 	{
 		var myValue = new CountCharacters("Kenobi: Hello there. \nGreivous: General Kenobi! \nR2D2@#$ \nC-3PO?\n");
 		Console.WriteLine(myValue.MyValue);
-		myValue.ConsoleValueCounts(FilterTypeEnum.LettersOnly, true);
+		myValue.ConsoleValueCounts(FilterTypeEnum.LettersOnly, false);
 		var staticString = "\nVader: No, I am your father.\nLuke: That's IMPOSSIBLE!\n";
 		Console.WriteLine(staticString);
 		CountCharacters.ConsoleValueCounts(staticString, FilterTypeEnum.NoFilter, false);
@@ -50,7 +50,7 @@ public class CountCharacters
 		{
 			case 1: return filterArr[0];
 			case 2: return filterArr[1];
-			case 3: return string.Join("", filterArr[0] + filterArr[1]);
+			case 3: return filterArr[0] + filterArr[1];
 			case 4: return filterArr[2];
 			default: return string.Join("", filterArr);
 		}
